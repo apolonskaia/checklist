@@ -61,110 +61,133 @@
       min-width: 100px;
       text-align: left;
     }
+
+    .empty-row {
+        height: 100px; /* Adjust the height as needed */
+      }
+
     .clicked {
             text-decoration: line-through;
-            background-color: #9ab84f !important; /* Use !im
+            background-color: #dea0d0 !important; /* Use !im
     }
 
   </style>
   <body>
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-    var table = document.getElementById("table1");
-    const numDays = 30;
-
-    // table header
-    var headerRow = document.createElement("tr");
-    var learningTh = document.createElement("th");
-    learningTh.classList.add("table-header");
-    learningTh.textContent = "Learning";
-    headerRow.appendChild(learningTh);
     
-    for (let i = 1; i <= numDays; i++) {
-        const day = document.createElement("th");
-        day.textContent = i;
-        headerRow.appendChild(day);
-    }  
-    table.appendChild(headerRow);   
-
-    // table content
-    var array = ["Stats", "Stepik", "Bioinf Book", "Cracking the CI", "Rosalind", "Coding"]
-    array.forEach(function (item, index) {
-        const tableRow = document.createElement("tr");
-        const tableCell = document.createElement("td");
-        tableCell.textContent = item;
-        tableRow.appendChild(tableCell);
+    document.addEventListener("DOMContentLoaded", function() {
         
-        for (let i = 1; i <= numDays; i++) {
-            const tableTd = document.createElement("td");
-            tableTd.setAttribute('data-id', item+i)
-            tableTd.classList.add("circle");
-            tableRow.appendChild(tableTd);
-        }
-        table.appendChild(tableRow);   
-    });
+        const numDays = 30;
 
-    var table2 = document.getElementById("table2");
-    headerRow = document.createElement("tr");
-    learningTh = document.createElement("th");
-    learningTh.classList.add("table-header");
-    learningTh.textContent = "Health";
-    headerRow.appendChild(learningTh);
-    
-    for (let i = 1; i <= numDays; i++) {
-        const day = document.createElement("th");
-        day.textContent = i;
-        headerRow.appendChild(day);
-    }  
-    table2.appendChild(headerRow);   
+        var table1_list = document.querySelectorAll("#table1_1, #table1_2");
+        var table1_Array = [...table1_list];
 
-    // table content
-    array = ["Sport", "Vitamins", "Eye Workout", "Guasha", "5k/day", "Meditation"]
-    array.forEach(function (item, index) {
-        const tableRow = document.createElement("tr");
-        const tableCell = document.createElement("td");
-        tableCell.textContent = item;
-        tableRow.appendChild(tableCell);
+        table1_Array.forEach(element => {
         
-        for (let i = 1; i <= numDays; i++) {
-            const tableTd = document.createElement("td");
-            tableTd.setAttribute('data-id', item+i)
-            tableTd.classList.add("circle");
-            tableRow.appendChild(tableTd);
-        }
-        table2.appendChild(tableRow);   
-    });
+            var headerRow = document.createElement("tr");
+            var learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Learning";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 1; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
 
-    var table3 = document.getElementById("table3");
-    headerRow = document.createElement("tr");
-    learningTh = document.createElement("th");
-    learningTh.classList.add("table-header");
-    learningTh.textContent = "Misc";
-    headerRow.appendChild(learningTh);
-    
-    for (let i = 1; i <= numDays; i++) {
-        const day = document.createElement("th");
-        day.textContent = i;
-        headerRow.appendChild(day);
-    }  
-    table3.appendChild(headerRow);   
+            // table content
+            var array = ["Stats", "Stepik", "Bioinf Book", "Cracking the CI", "Rosalind", "Coding"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 1; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+            });
+        });
 
-    // table content
-    array = ["Painting", "No shopping", "Reading Fiction"]
-    array.forEach(function (item, index) {
-        const tableRow = document.createElement("tr");
-        const tableCell = document.createElement("td");
-        tableCell.textContent = item;
-        tableRow.appendChild(tableCell);
-        
-        for (let i = 1; i <= numDays; i++) {
-            const tableTd = document.createElement("td");
-            tableTd.setAttribute('data-id', item+i)
-            tableTd.classList.add("circle");
-            tableRow.appendChild(tableTd);
-        }
-        table3.appendChild(tableRow);   
-    });
+
+        var table2_list = document.querySelectorAll("#table2_1, #table2_2");
+        var table2_Array = [...table2_list];
+
+        table2_Array.forEach(element => {
+            headerRow = document.createElement("tr");
+            learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Health";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 1; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
+
+            // table content
+            array = ["Sport", "Vitamins", "Eye Workout", "Guasha", "5k/day", "Meditation"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 1; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+            });
+        });
+
+
+
+        var table3_list = document.querySelectorAll("#table3_1, #table3_2");
+        var table3_Array = [...table3_list];
+
+        table3_Array.forEach(element => {
+
+            headerRow = document.createElement("tr");
+            learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Misc";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 1; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
+
+            // table content
+            array = ["Painting", "No shopping", "Reading Fiction"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 1; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+                });
+        });
 
 // Add click event listeners to circles
         const circles = document.querySelectorAll('.circle');
@@ -180,7 +203,7 @@
                 const isClicked = circle.classList.contains('clicked');
                 localStorage.setItem(circleId, isClicked.toString());
 
-                circle.style.backgroundColor = isClicked ? '#9ab84f' : originalColor;
+                circle.style.backgroundColor = isClicked ? '#d15ec9' : originalColor;
             });
 
             // Check local storage for previous status
@@ -188,33 +211,53 @@
             const isClicked = localStorage.getItem(circleId);
             if (isClicked === 'true') {
                 circle.classList.add('clicked');
-                circle.style.backgroundColor = '#9ab84f';
+                circle.style.backgroundColor = '#d15ec9';
             }
         });
 
 });
     </script>
-    <h1 style="font-family: monospace; font-size: 35px; margin-bottom: 160px; margin-top: 90px;"> September</h1>
+    
+    <h1 style="font-family: monospace; font-size: 35px; margin-bottom: 160px; margin-top: 90px;"> October</h1>
+
+    <div class="center-container">
+
+    <div>
+      <table style="margin-top: 160px" id="table1_2">
+      </table>
+      <p></p>
+
+      <table id="table2_2">
+      </table>
+      <p></p>
+
+      <table style="margin-bottom: 160px" id="table3_1" >
+      </table>
+    
+    </div>
+    </div>
+
+    <h1 style="font-family: monospace; font-size: 35px; margin-bottom: 210px; margin-top: 200px;"> September</h1>
 
     <div class="center-container">
     
     <div>
 
-      <table id="table1">
+      <table id="table1_1">
       </table>
       <p></p>
 
-      <table id="table2">
+      <table id="table2_1">
       </table>
       <p></p>
 
-      <table id="table3">
+      <table id="table3_1">
       </table>
-    
-
+      <div class="empty-row"></div>
       </div>
-    
+      
     </div>
+
   </body>
 </html>
 
