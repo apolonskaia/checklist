@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Check List</title>
+  </head>
+  <style>
+    body{
+      background-color:  white;
+    }
+    h1{
+      text-transofrm:  uppercase;
+      text-align: center;
+      color: black;
+    }
+    .row {
+            display: flex; /* Use flexbox to create a row */
+            align-items: center; 
+            margin-bottom: 0px; /* Default spacing */
+        }
+    .special-row {
+            display: flex; /* Use flexbox to create a row */
+            align-items: center; 
+            margin-bottom: 0px; /* Adjust the margin as needed */
+    }
+    .spacer {
+            width: 67px; /* Adjust the width for the desired space */
+        }
+    .spaced-text {
+        word-spacing: 12px; /* Adjust the value as needed */
+    }
+    .circle{
+      background-color: white;
+      height: 15px;
+      width: 15px;
+      border-radius:  50%;
+      border: 1.4px solid black;
+      margin: 0 4px;
+      /*border-width:  200%;*/
+/*      margin-left: 550px;
+      margin-top: 50px;
+      cursor: pointer;*/
+    }
+    .circle:hover{
+      background-color: lightgray;
+    }
+    th, td {
+            padding: 1px; /* Add padding for better spacing */
+            font-family: monospace;
+        }
+
+    .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30vh; /* Center vertically within the viewport */
+        }
+
+    .table-header {
+      font-size: 18px;
+      padding-right: 40px;
+      min-width: 150px;
+      text-align: left;
+    }
+
+    .empty-row {
+        height: 100px; /* Adjust the height as needed */
+      }
+
+    .clicked {
+            text-decoration: line-through;
+            background-color: #b7cde8 !important; /* Use !im
+    }
+
+  </style>
+  <body>
+    <script>
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        const numDays = 30;
+
+        var table1_list = document.querySelectorAll("#table1_1, #table1_2");
+        var table1_Array = [...table1_list];
+
+        table1_Array.forEach(element => {
+        
+            var headerRow = document.createElement("tr");
+            var learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Growth";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 11; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
+
+            // table content
+            var array = ["Stats", "Stepik", "Bioinf Book", "Cracking the CI", "Rosalind", "Coding"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 11; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+            });
+        });
+
+
+        var table2_list = document.querySelectorAll("#table2_1, #table2_2");
+        var table2_Array = [...table2_list];
+
+        table2_Array.forEach(element => {
+            headerRow = document.createElement("tr");
+            learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Health";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 11; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
+
+            // table content
+            array = ["Meditation", "Vitamins", "Sport", "5k/day"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 11; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+            });
+        });
+
+
+
+        var table3_list = document.querySelectorAll("#table3_1, #table3_2");
+        var table3_Array = [...table3_list];
+
+        table3_Array.forEach(element => {
+
+            headerRow = document.createElement("tr");
+            learningTh = document.createElement("th");
+            learningTh.classList.add("table-header");
+            learningTh.textContent = "Dopamine Detox";
+            headerRow.appendChild(learningTh);
+            
+            for (let i = 11; i <= numDays; i++) {
+                const day = document.createElement("th");
+                day.textContent = i;
+                headerRow.appendChild(day);
+            }  
+            element.appendChild(headerRow);   
+
+            // table content
+            array = ["No sugar", "No caffeine", "Social media < 1hr"]
+            array.forEach(function (item, index) {
+                const tableRow = document.createElement("tr");
+                const tableCell = document.createElement("td");
+                tableCell.textContent = item;
+                tableRow.appendChild(tableCell);
+                
+                for (let i = 11; i <= numDays; i++) {
+                    const tableTd = document.createElement("td");
+                    tableTd.setAttribute('data-id', item+i+'_'+element.id)
+                    tableTd.classList.add("circle");
+                    tableRow.appendChild(tableTd);
+                }
+                element.appendChild(tableRow);   
+                });
+        });
+
+// Add click event listeners to circles
+        const circles = document.querySelectorAll('.circle');
+
+        circles.forEach(circle => {
+            let originalColor = getComputedStyle(circle).backgroundColor;
+
+            circle.addEventListener('click', () => {
+                circle.classList.toggle('clicked');
+
+                // Save the status in local storage
+                const circleId = circle.getAttribute('data-id');
+                const isClicked = circle.classList.contains('clicked');
+                localStorage.setItem(circleId, isClicked.toString());
+
+                circle.style.backgroundColor = isClicked ? '#d15ec9' : originalColor;
+            });
+
+            // Check local storage for previous status
+            const circleId = circle.getAttribute('data-id');
+            const isClicked = localStorage.getItem(circleId);
+            if (isClicked === 'true') {
+                circle.classList.add('clicked');
+                circle.style.backgroundColor = '#d15ec9';
+            }
+        });
+
+});
+    </script>
+    
+   <!--  <h1 style="font-family: monospace; font-size: 35px; margin-bottom: 160px; margin-top: 90px;"> October</h1>
+
+    <div class="center-container">
+
+    <div>
+      <table style="margin-top: 160px" id="table1_2">
+      </table>
+      <p></p>
+
+      <table id="table2_2">
+      </table>
+      <p></p>
+
+      <table style="margin-bottom: 160px" id="table3_1" >
+      </table>
+    
+    </div>
+    </div> -->
+    <p style="font-family: monospace; font-size: 15px; margin-right: 10px;
+/*     font-size: 15px; margin-bottom: 10px; margin-top: 5px; */
+         text-align:right">2024</p>
+
+    <h1 style="font-family: monospace; font-size: 35px; margin-bottom: 210px; margin-top: 80px;">April</h1>
+
+    <div class="center-container">
+    
+    <div>
+
+      <table id="table2_1">
+      </table>
+      <p></p>
+
+      <table id="table3_1">
+      </table>
+      <p></p>
+
+      <table id="table1_1">
+      </table>
+      <div class="empty-row"></div>
+      </div>
+      
+    </div>
+
+  </body>
+</html>
+
