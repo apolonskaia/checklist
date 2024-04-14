@@ -11,6 +11,10 @@
       /* text-transform: uppercase; */
       text-align: center;
       color: #3b3b3b;
+      font-family: palatino, serif;
+      font-size: 40px;
+      margin-bottom: 155px;
+      margin-top: 120px;
     }
     .circle {
       background-color: white;
@@ -33,7 +37,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 30vh; /* Center vertically within the viewport */
+      height: 30vh;
     }
     .table-header {
       font-size: 18px;
@@ -53,29 +57,16 @@
     }
   </style>
   <body>
-    <h1
-      style="
-        font-family: palatino, serif;
-        font-size: 40px;
-        margin-bottom: 200px;
-        margin-top: 110px;
-      "
-    >
-      April
-    </h1>
+    <h1>April</h1>
 
     <div class="center-container">
-      <div id="tableContainer">
-        <!-- <table id="table1"></table> -->
-      </div>
+      <div id="tableContainer"></div>
     </div>
 
     <script type="module">
       function getDaysInMonth(month, year) {
         return new Date(year, month, 0).getDate();
       }
-
-      async function createTable() {}
 
       async function createSubRow(table, tableName, row, daysInSelectedMonth) {
         const healthDocRef = doc(db, "2024", "April", tableName, row);
@@ -122,7 +113,6 @@
           const circleId = tableTd.getAttribute("data-id");
           console.log(circleId);
           const isClicked = tableTd.classList.contains("clicked");
-          // localStorage.setItem(circleId, isClicked.toString());
           let splitCircleId = circleId.split("_"); // parts is now ["12", "Meditation"]
 
           let day_num = parseInt(splitCircleId[0]); // 12
@@ -206,12 +196,10 @@
               headerRow.appendChild(day);
             }
             table.appendChild(headerRow);
-
-            // const healthRows = ["Meditation", "Vitamins", "Sport", "5kDay"];
-
             rowsNames.forEach(async (row) => {
               createSubRow(table, tableName, row, daysInSelectedMonth);
             });
+
             // find tableContainer and append the table
             const tableContainer = document.getElementById("tableContainer");
             tableContainer.appendChild(table);
