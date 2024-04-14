@@ -4,256 +4,222 @@
     <title>Check List</title>
   </head>
   <style>
-  body{
-    background-color: white;
-  }
-  h1{
-    /* text-transform: uppercase; */
-    text-align: center;
-    color: #3b3b3b;
-  }
-  .circle{
-    background-color: white;
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    border: 1.4px solid #3b3b3b;
-    margin: 0 4px;
-  }
-  .circle:hover{
-    background-color: lightgray;
-  }
-  .clicked {
-    background-color: #b7cde8;
-  }
-  .circle.clicked:hover{
-    background-color: #b7cde8;;
-  }
-  .center-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 30vh; /* Center vertically within the viewport */
-  }
-  .table-header {
+    body {
+      background-color: white;
+    }
+    h1 {
+      /* text-transform: uppercase; */
+      text-align: center;
+      color: #3b3b3b;
+    }
+    .circle {
+      background-color: white;
+      height: 15px;
+      width: 15px;
+      border-radius: 50%;
+      border: 1.4px solid #3b3b3b;
+      margin: 0 4px;
+    }
+    .circle:hover {
+      background-color: lightgray;
+    }
+    .clicked {
+      background-color: #b7cde8;
+    }
+    .circle.clicked:hover {
+      background-color: #b7cde8;
+    }
+    .center-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 30vh; /* Center vertically within the viewport */
+    }
+    .table-header {
       font-size: 18px;
       padding-right: 40px;
       min-width: 150px;
       text-align: left;
       color: #3b3b3b;
-  }
-  th, td {
-            padding: 1px; /* Add padding for better spacing */
-            font-family: palatino, serif;
-            color: #3b3b3b;
-  }
-</style>
+    }
+    th,
+    td {
+      padding: 1px; /* Add padding for better spacing */
+      font-family: palatino, serif;
+      color: #3b3b3b;
+    }
+    table {
+      margin-bottom: 15px;
+    }
+  </style>
   <body>
-    <h1 style="font-family: palatino, serif; font-size: 40px; margin-bottom: 200px; margin-top: 110px;">April</h1>
+    <h1
+      style="
+        font-family: palatino, serif;
+        font-size: 40px;
+        margin-bottom: 200px;
+        margin-top: 110px;
+      "
+    >
+      April
+    </h1>
 
     <div class="center-container">
-      <div>
-        <table id="table1_1">
-        </table>
+      <div id="tableContainer">
+        <!-- <table id="table1"></table> -->
       </div>
     </div>
 
     <script type="module">
       function getDaysInMonth(month, year) {
         return new Date(year, month, 0).getDate();
-          }
-  // Initialize Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getFirestore, doc, collection, getDoc, getDocs, setDoc, updateDoc} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+      }
 
-  const firebaseConfig = {
+      async function createTable() {}
+
+      async function createSubRow(table, tableName, row, daysInSelectedMonth) {
+        const healthDocRef = doc(db, "2024", "April", tableName, row);
+        const pathParts = healthDocRef.path.split("/");
+        console.log(pathParts);
+
+        const docSnapshot = await getDoc(healthDocRef);
+        if (docSnapshot.exists()) {
+          const tableRow = document.createElement("tr");
+          const tableCell = document.createElement("td");
+          tableCell.textContent = row;
+          tableRow.appendChild(tableCell);
+
+          for (let i = 11; i <= daysInSelectedMonth; i++) {
+            createCircle(docSnapshot, i, row, tableName, tableRow);
+          }
+
+          table.appendChild(tableRow);
+        } else {
+          console.log("Document does not exist.");
+        }
+      }
+
+      function createCircle(docSnapshot, i, rowName, tableName, tableRow) {
+        var isChecked = docSnapshot.data()["day_" + i];
+        console.log(isChecked);
+        const tableTd = document.createElement("td");
+        tableTd.setAttribute("data-id", i + "_" + rowName + "_" + tableName);
+        console.log(tableTd.getAttribute("data-id"));
+        tableTd.classList.add("circle");
+
+        if (isChecked) {
+          tableTd.classList.add("clicked");
+        }
+
+        tableRow.appendChild(tableTd);
+
+        let originalColor = getComputedStyle(tableTd).backgroundColor;
+
+        tableTd.addEventListener("click", async (e) => {
+          tableTd.classList.toggle("clicked");
+
+          // Save the status in local storage
+          const circleId = tableTd.getAttribute("data-id");
+          console.log(circleId);
+          const isClicked = tableTd.classList.contains("clicked");
+          // localStorage.setItem(circleId, isClicked.toString());
+          let splitCircleId = circleId.split("_"); // parts is now ["12", "Meditation"]
+
+          let day_num = parseInt(splitCircleId[0]); // 12
+          let rowHeader = splitCircleId[1]; // "Meditation"
+          let tableHeader = splitCircleId[2]; // "Health"
+          console.log(day_num, rowHeader, tableHeader);
+          console.log(isClicked);
+
+          await updateDoc(doc(db, "2024", "April", tableHeader, rowHeader), {
+            ["day_" + day_num]: isClicked,
+          });
+        });
+      }
+
+      // Initialize Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        collection,
+        getDoc,
+        getDocs,
+        setDoc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+      const firebaseConfig = {
         apiKey: "AIzaSyD0rXajlITKZ0V82sGhmaVc68e1_E9YtFM",
         authDomain: "habitcircle-486b9.firebaseapp.com",
         projectId: "habitcircle-486b9",
         storageBucket: "habitcircle-486b9.appspot.com",
         messagingSenderId: "300521180889",
         appId: "1:300521180889:web:e81d6a401ab685006e38c8",
-        measurementId: "G-SDSC0NK8F2"
+        measurementId: "G-SDSC0NK8F2",
       };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
-  document.addEventListener("DOMContentLoaded", async function() {
-    const fetchData = async () => {
-      const meditationDocRef = doc(db, '2024', 'April', 'Health', 'Meditation');
-      const pathParts = meditationDocRef.path.split('/');
-      console.log(pathParts);
-      const tableName = pathParts[2]; // 'Health' 
-      const rowName = pathParts[3]; // 'Meditation' 
+      document.addEventListener("DOMContentLoaded", async function () {
+        const fetchData = async () => {
+          var table1_list = document.querySelectorAll("#table1");
+          var table1_Array = [...table1_list];
+          const tableNames = ["Health", "Dopamine Detox", "Growth"];
+          let categoriesDict = {
+            Health: ["Meditation", "Vitamins", "Sport", "5kDay"],
+            "Dopamine Detox": ["No sugar", "No caffeine", "Social media < 1hr"],
+            Growth: [
+              "Stats",
+              "Stepik",
+              "Bioinf Book",
+              "Cracking the CI",
+              "Rosalind",
+              "Coding",
+              "French > 30min",
+              "Nonfiction Read",
+            ],
+          };
+          let daysInSelectedMonth = getDaysInMonth(4, 2024);
 
-      // 4 month is April
-      let daysInSelectedMonth = getDaysInMonth(4, 2024);
+          // // 4 month is April
+          // let daysObject = {};
+          //   for(let i = 1; i <= daysInSelectedMonth; i++) {
+          //        daysObject[`day_${i}`] = false;
+          //         }
+          // await setDoc(doc(db, '2024', 'April', 'Health', '5kDay'), daysObject);
 
-      // let daysObject = {};
-      //   for(let i = 1; i <= daysInSelectedMonth; i++) {
-      //    daysObject[`day_${i}`] = false;
-      //     }
-      // await setDoc(doc(db, '2024', 'April', 'Health', 'Meditation'), daysObject);
+          // for each field in object categoriesDict create a table with rows with value in obejct name
 
-      const meditationDocSnapshot = await getDoc(meditationDocRef);
-      if (meditationDocSnapshot.exists()) {
-        var table1_list = document.querySelectorAll("#table1_1, #table1_2");
-        var table1_Array = [...table1_list];
-
-        table1_Array.forEach(element => {
-        
+          Object.entries(categoriesDict).forEach(([tableName, rowsNames]) => {
+            var table = document.createElement("table");
             var headerRow = document.createElement("tr");
             var learningTh = document.createElement("th");
             learningTh.classList.add("table-header");
             learningTh.textContent = tableName;
             headerRow.appendChild(learningTh);
-            
-            for (let i = 11; i <= daysInSelectedMonth; i++) {
-              
-                const day = document.createElement("th");
-                day.textContent = i;
-                headerRow.appendChild(day);
-            }  
-            element.appendChild(headerRow);
-
-            const tableRow = document.createElement("tr");
-            const tableCell = document.createElement("td");
-            tableCell.textContent = rowName;
-            tableRow.appendChild(tableCell);
-            // const tr = document.createElement('tr');
 
             for (let i = 11; i <= daysInSelectedMonth; i++) {
-              var isChecked = meditationDocSnapshot.data()['day_' + i];
-              console.log(isChecked);
-              const tableTd = document.createElement("td");
-              // const td = document.createElement('td');
-              // const circle = document.createElement('div');
-              tableTd.setAttribute('data-id', i+'_'+rowName)
-              tableTd.classList.add("circle");
-              // circle.classList.add('circle');
-
-              if (isChecked) {
-                tableTd.classList.add('clicked');
-              }
-
-              // td.appendChild(circle);
-              // tr.appendChild(td);
-              tableRow.appendChild(tableTd);
-
-            // element.appendChild(tableRow);   
+              const day = document.createElement("th");
+              day.textContent = i;
+              headerRow.appendChild(day);
             }
-            element.appendChild(tableRow);   
+            table.appendChild(headerRow);
 
-        });
+            // const healthRows = ["Meditation", "Vitamins", "Sport", "5kDay"];
 
-      const circles = document.querySelectorAll('.circle');
-      circles.forEach(circle => {
-      let originalColor = getComputedStyle(circle).backgroundColor;
-
-      circle.addEventListener('click', async () => {
-          circle.classList.toggle('clicked');
-
-          // Save the status in local storage
-          const circleId = circle.getAttribute('data-id');
-          console.log(circleId);
-          const isClicked = circle.classList.contains('clicked');
-          // localStorage.setItem(circleId, isClicked.toString());
-          let splitCircleId = circleId.split('_'); // parts is now ["12", "Meditation"]
-
-          let day_num = parseInt(splitCircleId[0]); // 12
-          let rowHeader = splitCircleId[1]; // "Meditation"
-          console.log(day_num, rowHeader);
-
-          await updateDoc(doc(db, '2024', 'April', 'Health', rowHeader), {
-            ['day_' + day_num]: isClicked,
+            rowsNames.forEach(async (row) => {
+              createSubRow(table, tableName, row, daysInSelectedMonth);
+            });
+            // find tableContainer and append the table
+            const tableContainer = document.getElementById("tableContainer");
+            tableContainer.appendChild(table);
           });
+        };
 
-          // const docSnapshot = await getDoc(doc(db, '2024', 'January', 'Health', rowHeader));
-          //   if (docSnapshot.exists()) {
-          //     console.log(`${docSnapshot.id} => ${docSnapshot.data().day_23}`);
-          //   } else {
-          //     console.log("No such document!");
-          //   }
-          
+        fetchData();
       });
-    })
-        // let daysObject = {};
-        // for(let i = 1; i <= daysInSelectedMonth; i++) {
-        //  daysObject[`day_${i}`] = false;
-        //   }
-        // await setDoc(doc(db, '2024', 'April', 'Health', 'Meditation'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Health', 'Sport'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Health', '5k_day'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Dopamine Detox', 'No sugar'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Dopamine Detox', 'No caffeine'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Dopamine Detox', 'Social media < 1hr'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Stats'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Stepik'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Bioinf Book'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Cracking the CI'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Rosalind'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Coding'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'French > 30min'), daysObject);
-        // await setDoc(doc(db, '2024', 'April', 'Growth', 'Nonfiction Read'), daysObject);
-        
-        // for(let i = 1; i <= daysInSelectedMonth; i++) {
-        //  daysObject[`day_${i}`] = false;
-        //   }
-        
-        
-        // console.log(isChecked);
-        // updateCirclesBasedOnData(isChecked);
-      } else {
-        console.log("Meditation document does not exist.");
-      }
-    };
-
-    fetchData();
-  });
-
-  async function updateCirclesBasedOnData(isChecked) {
-    // const table = document.getElementById('table1_1');
-    // const tr = document.createElement('tr');
-
-    // // day.forEach(status => {
-    //   const td = document.createElement('td');
-    //   const circle = document.createElement('div');
-    //   circle.classList.add('circle');
-    //   if (isChecked) {
-    //     circle.classList.add('clicked');
-    //   }
-    //   td.appendChild(circle);
-    //   tr.appendChild(td);
-    // // });
-
-    // table.appendChild(tr);
-
-    const circles = document.querySelectorAll('.circle');
-    circles.forEach(circle => {
-      let originalColor = getComputedStyle(circle).backgroundColor;
-
-      circle.addEventListener('click', async () => {
-          circle.classList.toggle('clicked');
-
-          // Save the status in local storage
-          const circleId = circle.getAttribute('data-id');
-          const isClicked = circle.classList.contains('clicked');
-          localStorage.setItem(circleId, isClicked.toString());
-
-          await setDoc(doc(db, '2024', 'January', 'Health', 'Meditation'), {
-            day_1: isClicked,
-          });
-          
-      });
-    })
-    
-
-
-
-  }
-
-  
-</script>
+    </script>
   </body>
 </html>
