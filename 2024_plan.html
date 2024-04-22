@@ -28,7 +28,7 @@
       background-color: lightgray;
     }
     .clicked {
-      background-color: #dce6cb;
+      background-color: #d3dec1;
     }
     .clickedTwice {
       background-color: #b7cde8;
@@ -75,7 +75,7 @@
       }
 
       async function createSubRow(table, tableName, row, daysInSelectedMonth) {
-        const healthDocRef = doc(db, "2024", "April", tableName, row);
+        const healthDocRef = doc(db, "2024", "January", tableName, row);
         const pathParts = healthDocRef.path.split("/");
 
         const docSnapshot = await getDoc(healthDocRef);
@@ -146,7 +146,7 @@
           // console.log(day_num, rowHeader, tableHeader);
           // console.log(isClicked);
 
-          await updateDoc(doc(db, "2024", "April", tableHeader, rowHeader), {
+          await updateDoc(doc(db, "2024", "January", tableHeader, rowHeader), {
             ["day_" + day_num]: status,
           });
         });
