@@ -50,7 +50,6 @@
       /* margin-top: 200px; */
       position: static;
       padding-top: 1px;
-
     }
     .table-header {
       font-size: 18px;
@@ -91,7 +90,6 @@
     }
   </style>
   <body>
-
     <div class="header">
       <div id="header"></div>
     </div>
@@ -123,7 +121,14 @@
           tableRow.appendChild(tableCell);
 
           for (let i = 1; i <= daysInSelectedMonth; i++) {
-            createCircle(docSnapshot, i, row, tableName, tableRow, selectedMonth);
+            createCircle(
+              docSnapshot,
+              i,
+              row,
+              tableName,
+              tableRow,
+              selectedMonth
+            );
           }
 
           table.appendChild(tableRow);
@@ -136,8 +141,7 @@
         monthElement,
         monthToNumber,
         categoriesDict,
-        selectedMonth,
-        
+        selectedMonth
       ) {
         var monthNumber;
         var daysInSelectedMonth;
@@ -146,7 +150,7 @@
         console.log(selectedMonth);
 
         const header = document.getElementById("header");
-        header.textContent = ''; // Clear the existing text
+        header.textContent = ""; // Clear the existing text
 
         const textNode = document.createTextNode(selectedMonth);
         header.appendChild(textNode);
@@ -197,7 +201,14 @@
         });
       }
 
-      function createCircle(docSnapshot, i, rowName, tableName, tableRow, selectedMonth) {
+      function createCircle(
+        docSnapshot,
+        i,
+        rowName,
+        tableName,
+        tableRow,
+        selectedMonth
+      ) {
         var isChecked = docSnapshot.data()["day_" + i];
         const tableTd = document.createElement("td");
         tableTd.setAttribute("data-id", i + "_" + rowName + "_" + tableName);
@@ -307,7 +318,6 @@
           const date = new Date();
           var selectedMonth = monthList[date.getMonth()];
 
-
           console.log(selectedMonth);
           monthNumber = monthToNumber[selectedMonth];
           daysInSelectedMonth = getDaysInMonth(monthNumber, 2024);
@@ -328,22 +338,34 @@
           };
           var sidebar = document.createElement("sidenav");
           sidebar.classList.add("sidenav");
-          
+
           monthList.forEach((month) => {
             var monthElement = document.createElement("p");
             monthElement.textContent = month;
             monthElement.classList.add("sidebarMonth");
             monthElement.addEventListener("click", async (e) => {
-              createMonthTable(monthElement, monthToNumber, categoriesDict, selectedMonth)
+              createMonthTable(
+                monthElement,
+                monthToNumber,
+                categoriesDict,
+                selectedMonth
+              );
             });
 
             sidebar.appendChild(monthElement);
           });
           document.body.appendChild(sidebar);
 
-          const allElements = document.querySelectorAll('.sidebarMonth'); // Select all elements
-          const selectedMonthElement = Array.from(allElements).find(el => el.textContent === selectedMonth);
-          createMonthTable(selectedMonthElement, monthToNumber, categoriesDict, selectedMonth)
+          const allElements = document.querySelectorAll(".sidebarMonth"); // Select all elements
+          const selectedMonthElement = Array.from(allElements).find(
+            (el) => el.textContent === selectedMonth
+          );
+          createMonthTable(
+            selectedMonthElement,
+            monthToNumber,
+            categoriesDict,
+            selectedMonth
+          );
           console.log(selectedMonth);
 
           // Object.entries(categoriesDict).forEach(async ([tableName, rowsNames]) => {
