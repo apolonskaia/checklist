@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Check List</title>
+  </head>
+  <style>
+    body {
+      background-color: white;
+    }
+    .header {
+      /* text-transform: uppercase; */
+      text-align: center;
+      color: #3b3b3b;
+      font-family: palatino, serif;
+      font-weight: bold;
+      font-size: 45px;
+      margin-bottom: 170px;
+      margin-top: 100px;
+      position: static;
+      display: block;
+    }
+    .circle {
+      background-color: white;
+      height: 15px;
+      width: 15px;
+      border-radius: 50%;
+      border: 1.4px solid #3b3b3b;
+      margin: 0 4px;
+    }
+    .circle:hover {
+      background-color: lightgray;
+    }
+    .clicked {
+      background-color: #e9f0dd;
+    }
+    .clickedTwice {
+      background-color: #b7cde8;
+    }
+    .circle.clicked:hover {
+      background-color: #c7d6ae;
+    }
+    .circle.clickedTwice:hover {
+      background-color: #92afd1;
+    }
+    .center-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 30vh;
+      /* margin-top: 200px; */
+      position: static;
+      padding-top: 1px;
+
+    }
+    .table-header {
+      font-size: 18px;
+      padding-right: 40px;
+      min-width: 150px;
+      text-align: left;
+      color: #3b3b3b;
+    }
+    th,
+    td {
+      padding: 1px; /* Add padding for better spacing */
+      font-family: palatino, serif;
+      color: #3b3b3b;
+    }
+    table {
+      margin-bottom: 15px;
+    }
+    .sidenav {
+      /* height: 100%; Full-height: remove this if you want "auto" height */
+      width: 160px; /* Set the width of the sidebar */
+      position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+      z-index: 1; /* Stay on top */
+      top: 0; /* Stay at the top */
+      /* left: 15; */
+      left: 15px;
+      background-color: white;
+      /* overflow-x: hidden; Disable horizontal scroll */
+      font-family: palatino, serif;
+      color: #d0cdcd;
+      padding-top: 0px;
+      line-height: 0.4;
+    }
+    .sidenav p:hover {
+      color: #757575;
+    }
+    .sidebarMonthClicked {
+      color: #545553;
+    }
+  </style>
+  <body>
+
+    <div class="header">
+      <div id="header"></div>
+    </div>
+
+    <div class="center-container">
+      <div id="tableContainer"></div>
+    </div>
+
+    <script type="module">
+      function getDaysInMonth(month, year) {
+        return new Date(year, month, 0).getDate();
+      }
+
+      async function createSubRow(
+        table,
+        tableName,
+        row,
+        selectedMonth,
+        daysInSelectedMonth
+      ) {
+        const healthDocRef = doc(db, "2024", selectedMonth, tableName, row);
+        const pathParts = healthDocRef.path.split("/");
+
+        const docSnapshot = await getDoc(healthDocRef);
+        if (docSnapshot.exists()) {
+          const tableRow = document.createElement("tr");
+          const tableCell = document.createElement("td");
+          tableCell.textContent = row;
+          tableRow.appendChild(tableCell);
+
+          for (let i = 1; i <= daysInSelectedMonth; i++) {
+            createCircle(docSnapshot, i, row, tableName, tableRow, selectedMonth);
+          }
+
+          table.appendChild(tableRow);
+        } else {
+          console.log("Document does not exist.");
+        }
+      }
+
+      async function createMonthTable(
+        monthElement,
+        monthToNumber,
+        categoriesDict,
+        selectedMonth,
+        
+      ) {
+        var monthNumber;
+        var daysInSelectedMonth;
+        monthElement.classList.toggle("sidebarMonthClicked");
+        selectedMonth = monthElement.textContent;
+        console.log(selectedMonth);
+
+        const header = document.getElementById("header");
+        header.textContent = ''; // Clear the existing text
+
+        const textNode = document.createTextNode(selectedMonth);
+        header.appendChild(textNode);
+
+        monthNumber = monthToNumber[selectedMonth];
+        daysInSelectedMonth = getDaysInMonth(monthNumber, 2024);
+        // Remove the existing table if there is one
+        const tableIds = [
+          "monthTable-Health",
+          "monthTable-Dopamine Detox",
+          "monthTable-Growth",
+        ]; // Replace with your actual table ids
+
+        tableIds.forEach((id) => {
+          var existingTable = document.getElementById(id);
+          if (existingTable) existingTable.remove();
+        });
+        // Create new table
+        Object.entries(categoriesDict).forEach(([tableName, rowsNames]) => {
+          var table = document.createElement("table");
+          table.id = "monthTable-" + tableName;
+          console.log(table.id);
+          var headerRow = document.createElement("tr");
+          var learningTh = document.createElement("th");
+          learningTh.classList.add("table-header");
+          learningTh.textContent = tableName;
+          headerRow.appendChild(learningTh);
+
+          for (let i = 1; i <= daysInSelectedMonth; i++) {
+            const day = document.createElement("th");
+            day.textContent = i;
+            headerRow.appendChild(day);
+          }
+          table.appendChild(headerRow);
+          rowsNames.forEach(async (row) => {
+            createSubRow(
+              table,
+              tableName,
+              row,
+              selectedMonth,
+              daysInSelectedMonth
+            );
+          });
+
+          // find tableContainer and append the table
+          const tableContainer = document.getElementById("tableContainer");
+          tableContainer.appendChild(table);
+        });
+      }
+
+      function createCircle(docSnapshot, i, rowName, tableName, tableRow, selectedMonth) {
+        var isChecked = docSnapshot.data()["day_" + i];
+        const tableTd = document.createElement("td");
+        tableTd.setAttribute("data-id", i + "_" + rowName + "_" + tableName);
+        // console.log(tableTd.getAttribute("data-id"));
+        tableTd.classList.add("circle");
+
+        if (isChecked === 1) {
+          tableTd.classList.add("clicked");
+        } else if (isChecked == 2) {
+          tableTd.classList.add("clickedTwice");
+        }
+
+        tableRow.appendChild(tableTd);
+
+        let originalColor = getComputedStyle(tableTd).backgroundColor;
+
+        tableTd.addEventListener("click", async (e) => {
+          const circleId = tableTd.getAttribute("data-id");
+          let splitCircleId = circleId.split("_"); // parts is now ["12", "Meditation"]
+          let day_num = parseInt(splitCircleId[0]); // 12
+          let rowHeader = splitCircleId[1]; // "Meditation"
+          let tableHeader = splitCircleId[2]; // "Health"
+
+          // tableTd.classList.toggle("clicked");
+          let isClicked = tableTd.classList.contains("clicked");
+          let isClickedTwice = tableTd.classList.contains("clickedTwice");
+
+          if (isClicked) {
+            tableTd.classList.remove("clicked");
+            tableTd.classList.add("clickedTwice");
+            var status = 2;
+          } else if (isClickedTwice) {
+            tableTd.classList.remove("clickedTwice");
+            tableTd.classList.remove("clicked");
+            var status = 0;
+          } else {
+            tableTd.classList.add("clicked");
+            var status = 1;
+          }
+
+          await updateDoc(
+            doc(db, "2024", selectedMonth, tableHeader, rowHeader),
+            {
+              ["day_" + day_num]: status,
+            }
+          );
+        });
+      }
+
+      // Initialize Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        collection,
+        getDoc,
+        getDocs,
+        setDoc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyD0rXajlITKZ0V82sGhmaVc68e1_E9YtFM",
+        authDomain: "habitcircle-486b9.firebaseapp.com",
+        projectId: "habitcircle-486b9",
+        storageBucket: "habitcircle-486b9.appspot.com",
+        messagingSenderId: "300521180889",
+        appId: "1:300521180889:web:e81d6a401ab685006e38c8",
+        measurementId: "G-SDSC0NK8F2",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        const fetchData = async () => {
+          var monthNumber;
+          var daysInSelectedMonth;
+          const monthList = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+          const monthToNumber = {
+            January: 1,
+            February: 2,
+            March: 3,
+            April: 4,
+            May: 5,
+            June: 6,
+            July: 7,
+            August: 8,
+            September: 9,
+            October: 10,
+            November: 11,
+            December: 12,
+          };
+          const date = new Date();
+          var selectedMonth = monthList[date.getMonth()];
+
+
+          console.log(selectedMonth);
+          monthNumber = monthToNumber[selectedMonth];
+          daysInSelectedMonth = getDaysInMonth(monthNumber, 2024);
+          const tableNames = ["Health", "Dopamine Detox", "Growth"];
+          let categoriesDict = {
+            Health: ["Meditation", "Vitamins", "Sport", "5kDay"],
+            "Dopamine Detox": ["No sugar", "No caffeine", "Social media < 1hr"],
+            Growth: [
+              "Stats",
+              "Stepik",
+              "Bioinf Book",
+              "Cracking the CI",
+              "Rosalind",
+              "Coding",
+              "French > 30min",
+              "Nonfiction Read",
+            ],
+          };
+          var sidebar = document.createElement("sidenav");
+          sidebar.classList.add("sidenav");
+          
+          monthList.forEach((month) => {
+            var monthElement = document.createElement("p");
+            monthElement.textContent = month;
+            monthElement.classList.add("sidebarMonth");
+            monthElement.addEventListener("click", async (e) => {
+              createMonthTable(monthElement, monthToNumber, categoriesDict, selectedMonth)
+            });
+
+            sidebar.appendChild(monthElement);
+          });
+          document.body.appendChild(sidebar);
+
+          const allElements = document.querySelectorAll('.sidebarMonth'); // Select all elements
+          const selectedMonthElement = Array.from(allElements).find(el => el.textContent === selectedMonth);
+          createMonthTable(selectedMonthElement, monthToNumber, categoriesDict, selectedMonth)
+          console.log(selectedMonth);
+
+          // Object.entries(categoriesDict).forEach(async ([tableName, rowsNames]) => {
+          //   monthNumber = monthToNumber['December'];
+          //   daysInSelectedMonth = getDaysInMonth(monthNumber, 2024);
+          //   let daysObject = {};
+          //     for(let i = 1; i <= daysInSelectedMonth; i++) {
+          //         daysObject[`day_${i}`] = 0;
+          //           }
+          //           rowsNames.forEach(async (rowName) => {
+          //             await setDoc(doc(db, '2024', 'December', tableName, rowName), daysObject);
+          //           });
+          //         });
+        };
+
+        fetchData();
+      });
+    </script>
+  </body>
+</html>
