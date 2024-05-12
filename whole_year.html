@@ -29,15 +29,16 @@
     }
     .circle:hover {
       background-color: lightgray;
+      cursor: pointer;
     }
     .clicked {
-      background-color: #e9f0dd;
+      background-color: #f8e8e9;
     }
     .clickedTwice {
       background-color: #b7cde8;
     }
     .circle.clicked:hover {
-      background-color: #c7d6ae;
+      background-color: #f5d1d4;
     }
     .circle.clickedTwice:hover {
       background-color: #92afd1;
@@ -83,10 +84,14 @@
       line-height: 0.4;
     }
     .sidenav p:hover {
-      color: #757575;
+      color: #929292;
+      cursor: pointer;
     }
     .sidebarMonthClicked {
-      color: #545553;
+      color: #545454;
+    }
+    .sidenav .sidebarMonthClicked:hover {
+      color: #000000;
     }
   </style>
   <body>
@@ -145,9 +150,19 @@
       ) {
         var monthNumber;
         var daysInSelectedMonth;
-        monthElement.classList.toggle("sidebarMonthClicked");
+        monthElement.classList.add("sidebarMonthClicked");
         selectedMonth = monthElement.textContent;
-        console.log(selectedMonth);
+
+        const allElements = document.querySelectorAll(".sidebarMonth"); // Select all elements
+        const notSelectedMonthElements = Array.from(allElements).filter(
+          (el) => el.textContent != selectedMonth
+        );
+
+        if (notSelectedMonthElements) {
+          notSelectedMonthElements.forEach((element) => {
+            element.classList.remove("sidebarMonthClicked");
+          });
+        }
 
         const header = document.getElementById("header");
         header.textContent = ""; // Clear the existing text
@@ -172,7 +187,7 @@
         Object.entries(categoriesDict).forEach(([tableName, rowsNames]) => {
           var table = document.createElement("table");
           table.id = "monthTable-" + tableName;
-          console.log(table.id);
+          // console.log(table.id);
           var headerRow = document.createElement("tr");
           var learningTh = document.createElement("th");
           learningTh.classList.add("table-header");
@@ -318,7 +333,7 @@
           const date = new Date();
           var selectedMonth = monthList[date.getMonth()];
 
-          console.log(selectedMonth);
+          // console.log(selectedMonth);
           monthNumber = monthToNumber[selectedMonth];
           daysInSelectedMonth = getDaysInMonth(monthNumber, 2024);
           const tableNames = ["Health", "Dopamine Detox", "Growth"];
@@ -366,7 +381,7 @@
             categoriesDict,
             selectedMonth
           );
-          console.log(selectedMonth);
+          // console.log(selectedMonth);
 
           // Object.entries(categoriesDict).forEach(async ([tableName, rowsNames]) => {
           //   monthNumber = monthToNumber['December'];
